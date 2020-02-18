@@ -1,0 +1,32 @@
+Configurando o Graylog em cluster
+
+Fonte: https://www.graylog.org/post/back-to-basics-from-single-server-to-graylog-cluster
+
+Quando você estiver planejando uma grande mudança em produção, com uma configuração de um cluster do 
+Elasticsearch e múltiplos Graylog Nodes, a primeira coisa a fazer é checar a documentação da instalação de múltiplos
+nodes.
+
+Como toda a configuração do Graylog é salva em MongoDB, garanta que ele seja escalável para todo o node Graylog
+que você pretenda adicionar a instalação. Se você está adicionando apenas um node, você pode seguir para o 
+próximo passo aqui. Se você está adicionando mais de um node ou quer fazer uma alta-disponibilidade para o MongoDB,
+dê uma olhada no FAQ sobre Escalonamento MongoDB.
+
+O novo Graylog Node será instalado seguindo os passos ns documentação. Note que você apenas necessita instalar o node 
+novo do Graylog, não precisa do Elasticsearch nem do MongoDB neste server. Para uma fácil configuração, apenas copie
+o arquivo de conf Graylog 'server.conf' do servidor que já está instalado e rodando o Graylog para o novo,
+então subistituir o endereço IP ou hostname da configuração com os dados do servidor já em produção.
+Geralmente isso significa alterar nas variáveis 'rest_listen_uri', 'web_listen_uri' e 'elasticsearch_network_host'.
+O mais importante, é alterar a variável 'is_master' para FALSO, assim o Graylog cluster não vai eleger este novo 
+como master automaticamente.
+
+Se você iniciar o novo Graylog node e navegar na interface Web em 'System/nodes', você verá que o novo node foi
+adicionado no seu cluster. Global inputs também vão ser adicionados automaticamente e estarão prontos para receber
+mensagens. Com múltiplos Graylog nodes, todos os dados podem ser compartilhados entre os servidores e todos os globais
+imputs estarão presentes em todos os nós do cluster. A única diferença entre o Graylog nodes é que um dos nós será
+configurado como master TRUE no 'is_master', o qual cuidará de qualquer manutenção. Isso inclui a manipulação
+das informação armazenadas, enviadas, alarmes configurados, e os arquivos escritos em disco. Adicionalmente, você
+pode usar a web interface em qualquer um dos nós do cluster rodando Graylog.
+
+
+
+
